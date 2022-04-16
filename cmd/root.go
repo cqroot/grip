@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/cqroot/grip/target"
 	"github.com/spf13/cobra"
@@ -25,21 +24,18 @@ func Execute() {
 }
 
 func runRootCmd(cmd *cobra.Command, args []string) {
-	var t string = args[0]
+	var targetName string = args[0]
 
-	if strings.HasPrefix(t, "github.com") {
-		fmt.Printf("Read t from github: %s\n", t)
-	} else {
-		err := target.ValidateLocalTarget(t)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+	t := target.NewTarget(targetName)
+	err := t.Validate()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
-		err = target.ExecuteLocalTarget(t)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+	err = t.Execute()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }

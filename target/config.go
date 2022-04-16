@@ -4,17 +4,17 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type Target struct {
+type Stage struct {
 	Name string `yaml:"name"`
 	Type string `yaml:"type"`
 }
 
-func ReadConfig(config []byte) ([]Target, error) {
-	var targets []Target
-	err := yaml.Unmarshal(config, &targets)
+func ReadConfig(config []byte) ([]Stage, error) {
+	var stages []Stage
+	err := yaml.Unmarshal(config, &stages)
 	if err != nil {
 		return nil, err
 	}
 
-	return targets, nil
+	return stages, nil
 }

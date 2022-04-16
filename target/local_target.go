@@ -13,11 +13,15 @@ var (
 	LocalTargetExecuteError  error = errors.New("local target execute error")
 )
 
-func ValidateLocalTarget(targetName string) error {
+type LocalTarget struct {
+	name string
+}
+
+func (t LocalTarget) Validate() error {
 	var fi os.FileInfo
 
 	// check target
-	fi, err := os.Stat(targetName)
+	fi, err := os.Stat(t.name)
 	if err != nil {
 		return fmt.Errorf("%w: %s", LocalTargetValidateError, err.Error())
 	}
@@ -26,7 +30,7 @@ func ValidateLocalTarget(targetName string) error {
 	}
 
 	// check config
-	configName := filepath.Join(targetName, "grip.yaml")
+	configName := filepath.Join(t.name, "grip.yaml")
 	fi, err = os.Stat(configName)
 	if err != nil {
 		return fmt.Errorf("%w: %s", LocalTargetValidateError, err.Error())
@@ -38,19 +42,19 @@ func ValidateLocalTarget(targetName string) error {
 	return nil
 }
 
-func ExecuteLocalTarget(targetName string) error {
-	config, err := ioutil.ReadFile(filepath.Join(targetName, "grip.yaml"))
+func (t LocalTarget) Execute() error {
+	config, err := ioutil.ReadFile(filepath.Join(t.name, "grip.yaml"))
 	if err != nil {
 		return fmt.Errorf("%w: %s", LocalTargetExecuteError, err.Error())
 	}
 
-	targets, err := ReadConfig(config)
+	stages, err := ReadConfig(config)
 	if err != nil {
 		return fmt.Errorf("%w: %s", LocalTargetExecuteError, err.Error())
 	}
 
-	for _, target := range targets {
-		fmt.Printf("%+v", target)
+	for _, stage := range stages {
+		fmt.Printf("%+v", stage)
 	}
 	return nil
 }
